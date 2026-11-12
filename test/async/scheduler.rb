@@ -328,6 +328,29 @@ describe Async::Scheduler do
 		
 	end
 	
+	with "#io_close" do
+		it "forwards the descriptor to the selector" do
+			descriptors = []
+			selector = Object.new
+			
+			selector.define_singleton_method(:io_close) do |descriptor|
+				descriptors << descriptor
+				false
+			end
+			
+			scheduler = Async::Scheduler.new(selector: selector)
+			
+			expect(scheduler.io_close(123)).to be == false
+			expect(descriptors).to be == [123]
+		end
+		
+		it "leaves the descriptor for Ruby to close if the selector does not support it" do
+			scheduler = Async::Scheduler.new(selector: Object.new)
+			
+			expect(scheduler.io_close(123)).to be_nil
+		end
+	end
+	
 	with "#block" do
 		it "ignores stale wake-ups from previous blocking operations" do
 			input, output = IO.pipe

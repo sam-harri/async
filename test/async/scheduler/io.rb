@@ -36,6 +36,20 @@ describe Async::Scheduler do
 			s2.close
 		end
 		
+		it "invokes io_close when an IO is closed" do
+			skip_unless_minimum_ruby_version("4.0")
+			
+			expect(reactor).to receive(:io_close)
+			
+			input, output = IO.pipe
+			input.close
+			
+			expect(input).to be(:closed?)
+		ensure
+			input&.close
+			output&.close
+		end
+		
 		it "can read a single character" do
 			s1, s2 = Socket.pair :UNIX, :STREAM, 0
 			

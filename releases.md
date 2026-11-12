@@ -1,5 +1,9 @@
 # Releases
 
+## Unreleased
+
+  - Added `Scheduler#io_close`, which forwards Ruby's `io_close` hook to the selector if it supports it. This lets the `EPoll` selector remove the registration of a descriptor before it is closed, and the `URing` selector close it asynchronously.
+
 ## v2.46.0
 
   - Fixed `Thread#kill` raising a `TypeError` while shutting down a thread with an active `Async::Reactor`.
