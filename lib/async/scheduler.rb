@@ -434,6 +434,18 @@ module Async
 			end
 		end
 		
+		# Invoked by Ruby before it closes a file descriptor, so that the selector can release any state associated with it.
+		#
+		# @public Since *Async v2.47* and *Ruby v4.0*.
+		#
+		# @parameter descriptor [Integer] The file descriptor that is about to be closed.
+		# @returns [Boolean | Nil] Whether the selector closed the descriptor. If not, Ruby closes it.
+		def io_close(descriptor)
+			if @selector.respond_to?(:io_close)
+				@selector.io_close(descriptor)
+			end
+		end
+		
 		# Wait for the specified IOs to become ready for the specified events.
 		#
 		# @public Since *Async v2.25*.
